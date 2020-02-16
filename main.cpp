@@ -213,6 +213,18 @@ void read_data_sets(std::vector<DataRow>& data_train, std::vector<DataRow>&data_
         std::getline(line_ss, row.train_test, ROW_EOL);
 //        std::cout << row.person_id << ", " << row.person_name << ", " << row.gender << ", " << row.train_test << std::endl;
 
+        if (row.train_test == TRAIN_LABEL) {
+            data_train.push_back(row);
+        } else {
+            data_test.push_back(row);
+        }
+    }
+    ifs.close();
+}
+
+
+void tokenize(std::vector<DataRow>& data_set) {
+    for (auto & row: data_set) {
         // Sanitize and Tokenize person_name
         std::string processed_text = row.person_name;
         processed_text = remove_punctuation(processed_text);
@@ -228,13 +240,7 @@ void read_data_sets(std::vector<DataRow>& data_train, std::vector<DataRow>&data_
         tokens = generate_n_grams(tokens);
 
         row.tokenized_person_name = tokens;
-        if (row.train_test == TRAIN_LABEL) {
-            data_train.push_back(row);
-        } else {
-            data_test.push_back(row);
-        }
     }
-    ifs.close();
 }
 
 
@@ -275,6 +281,10 @@ int main() {
 
     std::cout << "Num Training Rows: " << data_train.size() << std::endl;
     std::cout << "Num Test Rows: " << data_test.size() << std::endl;
+
+    std::cout << "Tokenizing features..." << std::endl;
+    tokenize(data_train);
+    tokenize( data_test);
 
     std::cout << "Training Naive-Bayes model..." << std::endl;
     unsigned int num_training_samples;
