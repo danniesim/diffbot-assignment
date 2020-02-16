@@ -47,7 +47,7 @@ Developed on:
 - CMake 3.15.3
 - g++ 5.4.0
 
-Requires a compiler that supports the C++14 standard.
+Requires a compiler that supports the C++14 standard. Also tested on macOS Mojave 10.14 with Xcode 11.3.
 
 ```
 # Build program
