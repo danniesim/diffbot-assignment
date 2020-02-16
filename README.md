@@ -9,20 +9,20 @@ dannie.sim@gmail.com
 A Naive-Bayes model is implemented here for training and evaluation of gender classification by name. Naive-Bayes is
 relatively simple to implement and debug and is a good fit for simple text classification tasks. 
 
-C++14 is used largely due to the authors familiarity with it, and to a lesser degree - to showcase execution speed
+C++14 is used largely due to the author's familiarity with it, and to a lesser degree - to showcase execution speed
 and efficiency compared to Python and to a lesser extent Java. Java was considered first as the language of choice,
 however, the author has not programmed in Java for years hence the fallback to C++14.
 
-BPE (Binary Pair Encoding) and SentencePiece subword tokenizers were considered for to increase classification
+BPE (Binary Pair Encoding) and SentencePiece subword tokenizers were considered to increase classification
 performance. However, the goal of > 95% accuracy on the test set was achieved with a simpler subword scheme explained
 below:
 - Create subword n-grams from the start and end of the first X words of a name.
-  (X = 1 was used as it gave best accuracy)
+  (X = 1 was used as it gave the best accuracy)
 - Min and Max n-gram length are model hyper-parameters set to 2 and 10 respectively.
 - subwords created from the front are prefixed with "#" to distinguish them from full words. Likewise,
  subwords created from the back are post-fixed with "#".
  
- It takes ~3 seconds for the complete run which includes:
+ On the author's PC (Intel i5 3.4 GHz, SSD and with -O3 compiler optimization) takes under 2 seconds for the complete run which includes:
  - Loading the training and test data sets (99,999 rows)
  - Training the model (With 79,992 rows marked as "Train")
  - Evaluate and output results of training and test sets

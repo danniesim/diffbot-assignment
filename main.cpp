@@ -73,7 +73,7 @@ std::string to_lower(std::string text) {
 std::vector<std::string> generate_n_grams(std::vector<std::string>& tokens) {
     std::vector<std::string> n_grams_to_add;
 
-    for (auto i = 0; (i < X_FIRST_TOKENS_TO_GENERATE_N_GRAMS) && (i < tokens.size()); i++) {
+    for (unsigned int i = 0; (i < X_FIRST_TOKENS_TO_GENERATE_N_GRAMS) && (i < tokens.size()); i++) {
         auto token = tokens[i];
         auto len = token.size();
         for (unsigned int j = MIN_N_GRAM - 1; j < MAX_N_GRAM && (j < len - 1); j++) {
@@ -189,14 +189,7 @@ void predict(const std::vector<DataRow>& data_rows
     print_accuracy("OVERALL", overall_correct, overall_incorrect);
 }
 
-
-int main() {
-    std::cout << "Welcome to the Diffbot Gender Classification by Name Assignment" << std::endl;
-
-    // Hold our train and test sets
-    std::vector<DataRow> data_train;
-    std::vector<DataRow> data_test;
-
+void read_data_sets(std::vector<DataRow>& data_train, std::vector<DataRow>&data_test) {
     // File plumbing
     std::ifstream ifs(in_file, std::ifstream::in);
     if (ifs.is_open()) {
@@ -242,18 +235,16 @@ int main() {
         }
     }
     ifs.close();
+}
 
-    std::cout << "Num Training Rows: " << data_train.size() << std::endl;
-    std::cout << "Num Test Rows: " << data_test.size() << std::endl;
 
-    //
-    // Naive Bayes classification model fitting
-    //
-
-    std::cout << "Training Naive-Bayes model..." << std::endl;
+//
+// Naive Bayes classification model fitting
+//
+void train(std::vector<DataRow>& data_train, std::vector<TokenValue>& label_token_values, unsigned int& num_training_samples) {
     // Label and token counting
     std::vector<TokenCount> label_token_counts(NUM_LABELS);
-    unsigned int num_training_samples = 0;
+    num_training_samples = 0;
     for (auto & row: data_train) {
 //        std::cout << row.person_id << ", " << row.person_name << ", " << row.gender << ", " << row.train_test << std::endl;
         DataLabel label_enum = LABEL_TO_ENUM.find(row.gender)->second;
@@ -262,7 +253,7 @@ int main() {
     }
 
     // Find per label values of each token
-    std::vector<TokenValue> label_token_values(NUM_LABELS);
+
     for (auto const& label_enum_map: LABEL_TO_ENUM) {
         auto label_enum = label_enum_map.second;
         for (auto const& token_count: label_token_counts[label_enum]) {
@@ -270,6 +261,25 @@ int main() {
                 (double)token_count.second / (double)num_training_samples;
         }
     }
+}
+
+
+int main() {
+    std::cout << "Welcome to the Diffbot Gender Classification by Name Assignment" << std::endl;
+
+    // Hold our train and test sets
+    std::vector<DataRow> data_train;
+    std::vector<DataRow> data_test;
+
+    read_data_sets(data_train, data_test);
+
+    std::cout << "Num Training Rows: " << data_train.size() << std::endl;
+    std::cout << "Num Test Rows: " << data_test.size() << std::endl;
+
+    std::cout << "Training Naive-Bayes model..." << std::endl;
+    unsigned int num_training_samples;
+    std::vector<TokenValue> label_token_values(NUM_LABELS);
+    train(data_train, label_token_values, num_training_samples);
     std::cout << "Training done" << std::endl;
 
     //
